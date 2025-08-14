@@ -1,0 +1,44 @@
+'use client'
+
+import * as React from "react"
+
+import { Calendar } from "@/components/ui/calendar"
+
+export default function Reserve() {
+    const [date, setDate] = React.useState<Date | undefined>(
+        new Date(2025, 5, 12)
+    )
+    const bookedDates = Array.from(
+        { length: 12 },
+        (_, i) => new Date(2025, 5, 15 + i)
+    )
+
+    return (
+        <>
+        <div className="">
+            <div className="flex roundad-md mt-20">
+                <div>
+                <Calendar
+                    mode="single"
+                    defaultMonth={date}
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={bookedDates}
+                    modifiers={{
+                        booked: bookedDates,
+                    }}
+                    modifiersClassNames={{
+                        booked: "[&>button]:line-through opacity-100",
+                    }}
+                    className="rounded-lg border shadow-sm"
+                />
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </div>
+        </>
+   )
+}
+

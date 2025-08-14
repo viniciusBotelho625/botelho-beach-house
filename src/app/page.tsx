@@ -1,6 +1,15 @@
+import { Hero } from "./sections/Hero";
+import Reserve from "./sections/Reserve";
 
 export default function Home() {
   return (
-    <div></div>
+    <>
+      <section>
+        <Hero />
+      </section>
+      <section>
+        <Reserve />
+      </section>
+    </>
   );
 }
