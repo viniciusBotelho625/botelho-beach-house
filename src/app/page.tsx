@@ -7,7 +7,7 @@ export default function Home() {
       <section>
         <Hero />
       </section>
-      <section>
+      <section className="w-full bg-gray-100">
         <Reserve />
       </section>
     </>
