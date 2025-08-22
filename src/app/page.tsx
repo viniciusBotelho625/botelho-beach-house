@@ -1,3 +1,4 @@
+import Amenities from "./sections/Amenities";
 import { Hero } from "./sections/Hero";
 import Reserve from "./sections/Reserve";
 
@@ -9,6 +10,9 @@ export default function Home() {
       </section>
       <section className="w-full bg-gray-100">
         <Reserve />
+      </section>
+      <section className="py-10">
+        <Amenities />
       </section>
     </>
   );

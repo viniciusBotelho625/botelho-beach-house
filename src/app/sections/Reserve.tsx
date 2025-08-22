@@ -68,7 +68,7 @@ export default function Reserve() {
 
   return (
     <div className="w-full py-20">
-      <h2 className="text-3xl font-bold text-center text-gray-900 mb-12 ">
+      <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
         Faça sua reserva
       </h2>
       <Card className="w-[768px] h-[406px] mx-auto bg-white grid grid-cols-2 gap-8 border-0 shadow-lg p-8">
