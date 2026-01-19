@@ -3,15 +3,27 @@
 import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 
-const cn = (...classes) => classes.filter(Boolean).join(" ");
+const cn = (...classes: string[]) => classes.filter(Boolean).join(" ");
+
+interface InfiniteMovingCardsProps {
+  items: {
+    quote: string;
+    name: string;
+    rating: number;
+  }[];
+  direction?: "left" | "right";
+  speed?: "fast" | "normal" | "slow";
+  pauseOnHover?: boolean;
+  className?: string;
+}
 
 export const InfiniteMovingCards = ({
   items,
   direction = "left",
-  speed = "fast",
+  speed = "slow",
   pauseOnHover = true,
   className,
-}) => {
+}: InfiniteMovingCardsProps) => {
   const containerRef = React.useRef(null);
   const scrollerRef = React.useRef(null);
   const [start, setStart] = useState(false);
@@ -88,6 +100,11 @@ export const InfiniteMovingCards = ({
       .slice(0, 2);
   };
 
+  const truncateText = (text: string, maxLength: number = 50) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + "...";
+  };
+
   const gradients = [
     "from-blue-500 to-cyan-500",
     "from-purple-500 to-pink-500",
@@ -101,7 +118,7 @@ export const InfiniteMovingCards = ({
     <div
       ref={containerRef}
       className={cn(
-        "scroller relative z-20 max-w-7xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
+        "scroller relative z-20 max-w-8xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
         className
       )}
     >
@@ -130,7 +147,7 @@ export const InfiniteMovingCards = ({
       >
         {items.map((item, idx) => (
           <li
-            className="relative w-[350px] max-w-full shrink-0 rounded-2xl border border-gray-100 p-6 md:w-[420px] bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+            className="relative w-[280px] sm:w-[300px] max-w-full shrink-0 rounded-xl sm:rounded-2xl border border-gray-100 p-4 sm:p-5 md:w-[360px] bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             key={`${item.name}-${idx}`}
           >
             <blockquote className="space-y-4">
@@ -143,8 +160,8 @@ export const InfiniteMovingCards = ({
                 >
                   <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
                 </svg>
-                <p className="relative z-10 text-gray-700 leading-relaxed pl-6 italic">
-                  {item.quote}
+                <p className="relative z-10 text-gray-700 text-sm leading-relaxed pl-6 italic">
+                  {truncateText(item.quote, 200)}
                 </p>
               </div>
 
@@ -163,17 +180,17 @@ export const InfiniteMovingCards = ({
                     {getInitials(item.name)}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{item.name}</p>
+                    <p className="font-semibold text-gray-900 text-sm">{item.name}</p>
                     <div className="flex gap-0.5 mt-1">
                       {renderStars(item.rating)}
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-sm font-bold text-gray-900">
                     {item.rating}.0
                   </div>
-                  <div className="text-xs text-gray-500">de 5</div>
+                  <div className="text-sm text-gray-500">de 5</div>
                 </div>
               </div>
             </blockquote>

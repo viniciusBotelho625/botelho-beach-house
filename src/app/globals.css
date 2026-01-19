@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -16,8 +15,8 @@
   --color-background: var(--white);
   --color-background-navbar: var(--background-navbar);
 
-   --animate-scroll: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
- 
+  --animate-scroll: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
+
   @keyframes scroll {
     to {
       transform: translate(calc(-50% - 0.5rem));
@@ -28,12 +27,11 @@
 body {
   font-optical-sizing: auto;
   font-style: normal;
-  background: 
-    linear-gradient(
-      rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0.35) 100%
-    ),
-    #002b36; /* sua cor base aqui */
+  background:
+    linear-gradient(rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.35) 100%),
+    #002b36;
+  /* sua cor base aqui */
 }
 
 @layer base {
@@ -68,7 +66,7 @@ body {
     --ring: 200 95% 55%;
 
     --radius: 1rem;
-    
+
     --gradient-primary: linear-gradient(135deg, hsl(200 95% 55%), hsl(280 85% 65%));
     --gradient-card: linear-gradient(180deg, hsl(220 20% 18%), hsl(220 20% 12%));
     --shadow-glow: 0 0 40px hsl(200 95% 55% / 0.3);
@@ -96,57 +94,66 @@ body {
     --background: 220 25% 8%;
     --foreground: 210 40% 98%;
   }
-  
+
   body {
     @apply bg-background;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Playfair Display', 'Georgia', serif;
   }
 
   #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
   }
-  to {
-    transform: rotate(360deg);
+
+  .logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
   }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
   }
-}
 
-.card {
-  padding: 2em;
-}
+  .logo.react:hover {
+    filter: drop-shadow(0 0 2em #61dafbaa);
+  }
 
-.read-the-docs {
-  color: #888;
-}
+  @keyframes logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    a:nth-of-type(2) .logo {
+      animation: logo-spin infinite 20s linear;
+    }
+  }
+
+  .card {
+    padding: 2em;
+  }
+
+  .read-the-docs {
+    color: #888;
+  }
 
 }
 
@@ -154,8 +161,8 @@ body {
   .bg-gradient-ocean {
     background-image: var(--gradient-ocean);
   }
+
   .bg-gradient-sand {
     background-image: var(--gradient-sand);
   }
 }
-

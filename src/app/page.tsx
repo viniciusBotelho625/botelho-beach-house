@@ -3,6 +3,7 @@ import Hero from "./sections/hero";
 import Photos from "./sections/photos";
 import Rating from "./sections/rating";
 import Reserve from "./sections/reserve";
+import Footer from "./sections/footer";
 
 export default function Home() {
   return (
@@ -11,18 +12,19 @@ export default function Home() {
         <Hero />
       </section>
       <section className="">
-        <div className="h-40 bg-[linear-gradient(to_top,rgba(0,0,0,0)_0%,rgba(0,0,0,0.35)_100%)]" />
-
         <Photos />
       </section>
-      {/* <section className="w-full bg-gray-100">
-        <Reserve />
-      </section> */}
       <section>
         <Amenities />
       </section>
       <section>
+        <Reserve />
+      </section>
+      <section>
         <Rating />
+      </section>
+      <section>
+        <Footer />
       </section>
     </>
   );

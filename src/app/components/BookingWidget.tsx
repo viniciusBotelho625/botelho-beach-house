@@ -8,6 +8,7 @@ import {
   ChevronDownIcon,
   Plus,
   Minus,
+  Clock10
 } from "lucide-react";
 import { Calendar } from "./ui/calendar";
 import {
@@ -26,12 +27,7 @@ import { ButtonRounded } from "./ButtonRounded";
 import { ptBR } from "date-fns/locale";
 import type { DateRange } from "react-day-picker";
 import { useQuery } from "@tanstack/react-query";
-
-interface Booking {
-  start: Date;
-  end: Date;
-  summary?: string;
-}
+import { getAirbnbCalendar, type Booking } from "@/lib/airbnbCalendar";
 
 const BookingWidget = () => {
   const [checkInOpen, setCheckInOpen] = useState(false);
@@ -45,58 +41,28 @@ const BookingWidget = () => {
   });
   const [animals, setAnimals] = useState(0);
   const [guestsPopoverOpen, setGuestsPopoverOpen] = useState(false);
+  const [horario, setHorario] = useState<string>("");
   const totalGuests = guests.adultos + guests.criancas;
 
-  // Buscar reservas do Airbnb usando TanStack Query
+  // Buscar reservas do Airbnb usando TanStack Query com cache de 30 minutos
   const {
     data: bookings = [],
     isLoading: loadingBookings,
     error: bookingsError,
   } = useQuery<Booking[]>({
     queryKey: ["airbnb-calendar"],
-    queryFn: async () => {
-      const response = await fetch("/api/airbnb-calendar");
-
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      // Verificar se há erro na resposta
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      // Converter strings de data para objetos Date
-      const processedBookings: Booking[] = data
-        .filter((booking: any) => booking.start && booking.end)
-        .map((booking: any) => {
-          const start = new Date(booking.start);
-          const end = new Date(booking.end);
-
-          // Validar se as datas são válidas
-          if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-            return null;
-          }
-
-          return {
-            start,
-            end,
-            summary: booking.summary || "",
-          };
-        })
-        .filter((booking: Booking | null) => booking !== null) as Booking[];
-
-      return processedBookings;
-    },
-    staleTime: 60 * 1000, // 1 minuto
-    refetchOnWindowFocus: false,
+    queryFn: getAirbnbCalendar,
+    staleTime: 30 * 60 * 1000, // 30 minutos - dados considerados "frescos" por 30 minutos
+    gcTime: 60 * 60 * 1000, // 1 hora - mantém dados em cache por 1 hora
+    refetchOnWindowFocus: false, // Não refaz requisição ao focar na janela
+    refetchOnMount: false, // Não refaz requisição ao montar o componente se os dados estão frescos
+    refetchOnReconnect: false, // Não refaz requisição ao reconectar
+    retry: 2, // Tenta novamente 2 vezes em caso de erro
   });
 
   // Log de erros (opcional, para debug)
   if (bookingsError) {
-    console.error("Erro ao buscar reservas:", bookingsError);
+    console.error("❌ Erro ao buscar reservas:", bookingsError);
   }
 
   // Função para verificar se uma data está ocupada
@@ -133,14 +99,14 @@ const BookingWidget = () => {
   };
 
   return (
-    <div className="w-full max-w-8xl mx-auto px-10">
-      <div className="bg-[hsl(var(--glass-bg))]/80 backdrop-blur-md rounded-lg px-20 py-10 border border-white/10">
-        <div className="flex flex-col md:flex-row gap-15 items-end">
+    <div className="w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-10">
+      <div className="bg-[hsl(var(--glass-bg))]/80 backdrop-blur-md rounded-lg px-4 sm:px-8 lg:px-20 py-6 sm:py-8 lg:py-10 border border-white/10">
+        <div className="flex flex-col md:flex-row gap-8 sm:gap-12 lg:gap-15 items-end">
           <div className="flex gap-4 ">
-            <div className="flex flex-col gap-3 border-b border-white/20 ">
+            <div className="flex flex-col gap-2 sm:gap-3 border-b border-white/20 w-full sm:w-auto">
               <Label
                 htmlFor="date-picker"
-                className="text-white/70 text-md uppercase tracking-widest font-light"
+                className="text-white/70 text-xs sm:text-sm md:text-md uppercase tracking-widest font-light"
               >
                 Data
               </Label>
@@ -149,7 +115,7 @@ const BookingWidget = () => {
                   <Button
                     variant="outline"
                     id="checkout-date-picker"
-                    className="w-60 justify-between font-normal bg-transparent border-none shadow-none text-white/70 !p-0 cursor-pointer "
+                    className="w-full sm:w-60 justify-between font-normal bg-transparent border-none shadow-none text-white/70 !p-0 cursor-pointer text-sm sm:text-base"
                   >
                     {checkInDate && checkOutDate
                       ? `${checkInDate.toLocaleDateString("pt-BR")} - ${checkOutDate.toLocaleDateString("pt-BR")}`
@@ -240,8 +206,33 @@ const BookingWidget = () => {
             </div>
           </div>
 
-          <div className="space-y-2 border-b border-white/20 ">
-            <Label className="text-white/70 text-md uppercase tracking-widest font-light">
+          <div className="space-y-2 border-b border-white/20 w-full sm:w-auto">
+            <Label className="text-white/70 text-xs sm:text-sm md:text-md uppercase tracking-widest font-light">
+              Horário de Entrada
+            </Label>
+            <Select value={horario} onValueChange={setHorario}>
+              <SelectTrigger className="w-full sm:w-60 justify-between font-normal bg-transparent border-none shadow-none text-white/70 cursor-pointer !p-0 text-sm sm:text-base h-auto [&_svg]:text-white/70 gap-2">
+                <div className="flex items-center gap-2">
+                  <Clock10 className="h-4 w-4" />
+                  <SelectValue placeholder="Selecionar horário" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-[#03303E]/70 backdrop-blur-xl border-white/30 !rounded-lg shadow-2xl">
+                <SelectItem value="manha" className="text-white hover:bg-white/10 cursor-pointer">
+                  Manhã
+                </SelectItem>
+                <SelectItem value="tarde" className="text-white hover:bg-white/10 cursor-pointer">
+                  Tarde
+                </SelectItem>
+                <SelectItem value="noite" className="text-white hover:bg-white/10 cursor-pointer">
+                  Noite
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2 border-b border-white/20 w-full sm:w-auto">
+            <Label className="text-white/70 text-xs sm:text-sm md:text-md uppercase tracking-widest font-light">
               Hóspedes
             </Label>
 
@@ -252,7 +243,7 @@ const BookingWidget = () => {
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-60 justify-between font-normal bg-transparent border-none shadow-none text-white/70 cursor-pointer !p-0"
+                  className="w-full sm:w-60 justify-between font-normal bg-transparent border-none shadow-none text-white/70 cursor-pointer !p-0 text-sm sm:text-base"
                 >
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4" />
@@ -410,9 +401,9 @@ const BookingWidget = () => {
             </Popover>
           </div>
 
-          <Button className="w-full md:w-60 sm:w-auto  text-black border-0 bg-white/90 hover:bg-white/50 h-11 hover:text-black font-light tracking-wider uppercase text-sm cursor-pointer">
+          <Button className="w-full sm:w-auto md:w-60 text-black border-0 bg-white/90 hover:bg-white/50 h-10 sm:h-11 hover:text-black font-light tracking-wider uppercase text-xs sm:text-sm cursor-pointer mt-4 sm:mt-0">
             Reserva
-            <ChevronRight className="h-4 w-4 ml-2" />
+            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-2" />
           </Button>
         </div>
       </div>

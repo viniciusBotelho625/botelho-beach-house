@@ -1,287 +1,251 @@
 "use client";
 
-import * as React from "react";
+import { useState } from "react";
 import { Calendar } from "@/app/components/ui/calendar";
-import { Card } from "@/app/components/ui/card";
-import { useEffect, useState } from "react";
-import { CalendarIcon, Users } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/app/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/components/ui/select";
-
-interface Guest {
-  id: number;
-  name: string;
-}
+import { Textarea } from "@/app/components/ui/textarea";
+import { Send } from "lucide-react";
+import { ptBR } from "date-fns/locale";
+import { useQuery } from "@tanstack/react-query";
+import { getAirbnbCalendar, type Booking } from "@/lib/airbnbCalendar";
 
 export default function Reserve() {
-  const [openCheckIn, setOpenCheckIn] = useState(false);
-  const [openCheckOut, setOpenCheckOut] = useState(false);
-  const [checkInDate, setCheckInDate] = useState<Date | undefined>(
-    new Date("2025-06-01")
-  );
-  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>(
-    new Date("2025-06-05")
-  );
-  const [month, setMonth] = useState<Date | undefined>(checkInDate);
-  const [checkInValue, setCheckInValue] = useState(formatDate(checkInDate));
-  const [checkOutValue, setCheckOutValue] = useState(formatDate(checkOutDate));
-  const [guests, setGuests] = useState<Guest[]>([]);
-  const [bookings, setBookings] = useState([]);
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [formData, setFormData] = useState({
+    nome: "",
+    email: "",
+    telefone: "",
+    hospedes: "",
+    mensagem: "",
+  });
 
-  useEffect(() => {
-    fetch("/api/airbnb-calendar")
-      .then((res) => res.json())
-      .then(setBookings)
-      .catch(() => {});
-  }, []);
+  // Buscar reservas do Airbnb usando TanStack Query com cache de 30 minutos
+  const {
+    data: bookings = [],
+    isLoading: loadingBookings,
+    error: bookingsError,
+  } = useQuery<Booking[]>({
+    queryKey: ["airbnb-calendar"],
+    queryFn: getAirbnbCalendar,
+    staleTime: 30 * 60 * 1000, // 30 minutos - dados considerados "frescos" por 30 minutos
+    gcTime: 60 * 60 * 1000, // 1 hora - mantém dados em cache por 1 hora
+    refetchOnWindowFocus: false, // Não refaz requisição ao focar na janela
+    refetchOnMount: false, // Não refaz requisição ao montar o componente se os dados estão frescos
+    refetchOnReconnect: false, // Não refaz requisição ao reconectar
+    retry: 2, // Tenta novamente 2 vezes em caso de erro
+  });
 
-  function formatDate(date: Date | undefined) {
-    if (!date) {
-      return "";
-    }
-    return date.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
+  // Log de erros (opcional, para debug)
+  if (bookingsError) {
+    console.error("Erro ao buscar reservas:", bookingsError);
+  }
+
+  // Função para verificar se uma data está ocupada
+  const isDateBooked = (date: Date): boolean => {
+    if (bookings.length === 0) return false;
+
+    const dateToCheck = new Date(date);
+    dateToCheck.setHours(0, 0, 0, 0);
+
+    return bookings.some((booking) => {
+      const bookingStart = new Date(booking.start);
+      bookingStart.setHours(0, 0, 0, 0);
+
+      const bookingEnd = new Date(booking.end);
+      bookingEnd.setHours(0, 0, 0, 0);
+
+      // Verifica se a data está dentro do intervalo de reserva
+      // Inclui o dia de check-in e exclui o dia de check-out (check-out libera o dia)
+      return dateToCheck >= bookingStart && dateToCheck < bookingEnd;
     });
-  }
+  };
 
-  function isValidDate(date: Date | undefined) {
-    if (!date) {
-      return false;
-    }
-    return !isNaN(date.getTime());
-  }
+  // Função para desabilitar datas ocupadas e datas passadas
+  const disabledDates = (date: Date): boolean => {
+    // Desabilita datas anteriores à data atual
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  useEffect(() => {
-    fetch("/data.json")
-      .then((res) => res.json())
-      .then((data) => setGuests(data.guests))
-      .catch(() => {});
-  }, []);
+    const dateToCheck = new Date(date);
+    dateToCheck.setHours(0, 0, 0, 0);
+
+    // Retorna true se a data for anterior a hoje ou se estiver ocupada
+    return dateToCheck < today || isDateBooked(date);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Aqui você pode adicionar a lógica de envio do formulário
+    console.log("Formulário enviado:", { date, ...formData });
+    // Reset form
+    setFormData({
+      nome: "",
+      email: "",
+      telefone: "",
+      hospedes: "",
+      mensagem: "",
+    });
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   return (
-    <section className="w-full py-24 px-4 bg-gradient-to-br from-background via-secondary/30 to-background">
-      <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
-            Faça sua Reserva
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Escolha as datas perfeitas para sua estadia e garanta sua
-            experiência inesquecível
-          </p>
-        </div>
+    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 bg-[#f8f9fa]">
+      <div className="max-w-7xl mx-auto">
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+          {/* Left Card: Calendar */}
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 lg:p-8 border border-gray-100">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+              Selecione a Data
+            </h3>
+            <div className="flex justify-center">
+              <Calendar
+                mode="single"
+                locale={ptBR}
+                selected={date}
+                onSelect={(selectedDate) => {
+                  if (selectedDate) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const dateToCheck = new Date(selectedDate);
+                    dateToCheck.setHours(0, 0, 0, 0);
 
-        <Card
-          className="max-w-5xl mx-auto bg-card border-0 overflow-hidden"
-          style={{ boxShadow: "var(--shadow-large)" }}
-        >
-          <div className="grid lg:grid-cols-2 gap-8 p-8 lg:p-10">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-primary/80">
-                  <CalendarIcon className="h-6 w-6 text-primary-foreground" />
-                </div>
-                <h3 className="text-2xl font-semibold text-foreground">
-                  Selecione as Datas
-                </h3>
-              </div>
-              <div className="bg-secondary/50 rounded-2xl p-4">
-                <Calendar
-                  mode="single"
-                  defaultMonth={checkInDate}
-                  selected={checkInDate}
-                  onSelect={setCheckInDate}
-                  modifiersClassNames={{
-                    booked: "[&>button]:line-through opacity-100",
-                  }}
-                  className="rounded-xl shadow-sm mx-auto"
-                />
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 rounded-xl p-4">
-                <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
-                <span>Datas disponíveis em destaque</span>
-              </div>
-            </div>
+                    // Valida se a data selecionada não é anterior a hoje
+                    if (dateToCheck < today) {
+                      return; // Não permite selecionar data passada
+                    }
+                    if (isDateBooked(selectedDate)) {
+                      return; // Não permite selecionar data ocupada
+                    }
 
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-accent to-accent/80">
-                  <Users className="h-6 w-6 text-accent-foreground" />
-                </div>
-                <h3 className="text-2xl font-semibold text-foreground">
-                  Detalhes da Reserva
-                </h3>
-              </div>
-
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <Label
-                    htmlFor="checkin"
-                    className="text-base font-medium text-foreground flex items-center gap-2"
-                  >
-                    Check-in
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="checkin"
-                      value={checkInValue}
-                      placeholder="Selecione a data"
-                      className="pr-10 h-12 bg-background border-border focus:border-primary transition-all"
-                      onChange={(e) => {
-                        const date = new Date(e.target.value);
-                        setCheckInValue(e.target.value);
-                        if (isValidDate(date)) {
-                          setCheckInDate(date);
-                          setMonth(date);
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "ArrowDown") {
-                          e.preventDefault();
-                          setOpenCheckIn(true);
-                        }
-                      }}
-                    />
-                    <Popover open={openCheckIn} onOpenChange={setOpenCheckIn}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="absolute top-1/2 right-2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-primary/10"
-                        >
-                          <CalendarIcon className="h-4 w-4 text-primary" />
-                          <span className="sr-only">Selecionar data</span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="end">
-                        <Calendar
-                          mode="single"
-                          selected={checkInDate}
-                          captionLayout="dropdown"
-                          month={month}
-                          onMonthChange={setMonth}
-                          onSelect={(date) => {
-                            setCheckInDate(date);
-                            setCheckInValue(formatDate(date));
-                            setOpenCheckIn(false);
-                          }}
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label
-                    htmlFor="checkout"
-                    className="text-base font-medium text-foreground flex items-center gap-2"
-                  >
-                    Check-out
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="checkout"
-                      value={checkOutValue}
-                      placeholder="Selecione a data"
-                      className="pr-10 h-12 bg-background border-border focus:border-primary transition-all"
-                      onChange={(e) => {
-                        const date = new Date(e.target.value);
-                        setCheckOutValue(e.target.value);
-                        if (isValidDate(date)) {
-                          setCheckOutDate(date);
-                          setMonth(date);
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "ArrowDown") {
-                          e.preventDefault();
-                          setOpenCheckOut(true);
-                        }
-                      }}
-                    />
-                    <Popover open={openCheckOut} onOpenChange={setOpenCheckOut}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="absolute top-1/2 right-2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-primary/10"
-                        >
-                          <CalendarIcon className="h-4 w-4 text-primary" />
-                          <span className="sr-only">Selecionar data</span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="end">
-                        <Calendar
-                          mode="single"
-                          selected={checkOutDate}
-                          captionLayout="dropdown"
-                          month={month}
-                          onMonthChange={setMonth}
-                          onSelect={(date) => {
-                            setCheckOutDate(date);
-                            setCheckOutValue(formatDate(date));
-                            setOpenCheckOut(false);
-                          }}
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label
-                    htmlFor="guests"
-                    className="text-base font-medium text-foreground"
-                  >
-                    Número de Hóspedes
-                  </Label>
-                  <Select>
-                    <SelectTrigger
-                      id="guests"
-                      className="h-12 bg-background border-border focus:border-primary"
-                    >
-                      <SelectValue placeholder="Selecione a quantidade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Hóspedes</SelectLabel>
-                        {guests.map((guest) => (
-                          <SelectItem
-                            key={guest.id}
-                            value={guest.id.toString()}
-                          >
-                            {guest.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button className="w-full h-14 text-lg font-semibold mt-8 bg-gradient-to-r from-accent to-accent/90 hover:from-accent/90 hover:to-accent text-accent-foreground shadow-lg hover:shadow-xl transition-all duration-300">
-                  Confirmar Reserva
-                </Button>
-              </div>
+                    setDate(selectedDate);
+                  }
+                }}
+                disabled={disabledDates}
+                modifiers={{
+                  booked: (date) => isDateBooked(date),
+                }}
+                modifiersClassNames={{
+                  booked:
+                    "opacity-40 line-through cursor-not-allowed text-red-300/50",
+                }}
+                classNames={{
+                  day_disabled:
+                    "opacity-40 line-through cursor-not-allowed text-red-300",
+                }}
+                className="rounded-lg"
+                captionLayout="dropdown-months"
+              />
             </div>
           </div>
-        </Card>
+
+          {/* Right Card: Contact Form */}
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6 lg:p-8 border border-gray-100">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+              Solicite um Orçamento
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="nome" className="text-gray-900 font-medium text-sm">
+                  Nome Completo
+                </Label>
+                <Input
+                  id="nome"
+                  name="nome"
+                  type="text"
+                  placeholder="Seu nome"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  required
+                  className="h-11 bg-[#f5f5f5] border border-gray-200 rounded-lg focus:border-[#3fbbd0] focus:ring-1 focus:ring-[#3fbbd0] text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-900 font-medium text-sm">
+                  E-mail
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="h-11 bg-[#f5f5f5] border border-gray-200 rounded-lg focus:border-[#3fbbd0] focus:ring-1 focus:ring-[#3fbbd0] text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="telefone" className="text-gray-900 font-medium text-sm">
+                  Telefone
+                </Label>
+                <Input
+                  id="telefone"
+                  name="telefone"
+                  type="tel"
+                  placeholder="(11) 99999-9999"
+                  value={formData.telefone}
+                  onChange={handleChange}
+                  required
+                  className="h-11 bg-[#f5f5f5] border border-gray-200 rounded-lg focus:border-[#3fbbd0] focus:ring-1 focus:ring-[#3fbbd0] text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="hospedes" className="text-gray-900 font-medium text-sm">
+                  Número de Hóspedes
+                </Label>
+                <Input
+                  id="hospedes"
+                  name="hospedes"
+                  type="number"
+                  placeholder="Ex: 4"
+                  value={formData.hospedes}
+                  onChange={handleChange}
+                  required
+                  min="1"
+                  className="h-11 bg-[#f5f5f5] border border-gray-200 rounded-lg focus:border-[#3fbbd0] focus:ring-1 focus:ring-[#3fbbd0] text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mensagem" className="text-gray-900 font-medium text-sm">
+                  Mensagem
+                </Label>
+                <Textarea
+                  id="mensagem"
+                  name="mensagem"
+                  placeholder="Conte-nos mais sobre sua viagem, datas desejadas, etc."
+                  value={formData.mensagem}
+                  onChange={handleChange}
+                  rows={4}
+                  className="bg-[#f5f5f5] border border-gray-200 rounded-lg focus:border-[#3fbbd0] focus:ring-1 focus:ring-[#3fbbd0] resize-none text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-[#3fbbd0] to-[#2ea8b8] hover:from-[#2ea8b8] hover:to-[#3fbbd0] text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <Send className="h-4 w-4" />
+                Enviar Solicitação
+              </Button>
+            </form>
+          </div>
+        </div>
       </div>
     </section>
   );

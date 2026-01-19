@@ -64,15 +64,15 @@ export default function Amenities() {
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 font-serif">
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4 font-serif">
             Comodidades
           </h2>
-          <div className="w-24 h-1 bg-gradient-ocean mx-auto rounded-full" />
+          <div className="w-16 sm:w-24 h-1 bg-gradient-ocean mx-auto rounded-full" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {amenities.map((item) => {
             const Icon = item.Icon;
             return (

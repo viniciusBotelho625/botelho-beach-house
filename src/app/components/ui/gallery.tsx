@@ -1,171 +1,195 @@
-import React, { useState, useRef, useEffect } from "react";
-import { motion } from "motion/react";
+"use client";
+
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
-interface GalleryItem {
+export interface Card {
   id: number;
-  title: string;
-  description: string;
-  image: string;
+  content: React.ReactElement | React.ReactNode;
+  className?: string;
+  thumbnail: string;
 }
 
-interface GalleryProps {
-  items: GalleryItem[];
+interface LayoutGridProps {
+  cards: Card[];
+  showMoreButton?: boolean;
+  morePhotosCount?: number;
+  onShowMore?: () => void;
 }
 
-export const Gallery = ({ items }: GalleryProps) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollPosition = container.scrollTop;
-      const windowHeight = window.innerHeight;
-      const newIndex = Math.round(scrollPosition / windowHeight);
-      setActiveIndex(Math.min(Math.max(0, newIndex), items.length - 1));
-    };
-
-    container.addEventListener("scroll", handleScroll, { passive: true });
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [items.length]);
+export const LayoutGrid = ({ 
+  cards, 
+  showMoreButton = false,
+  morePhotosCount = 0,
+  onShowMore 
+}: LayoutGridProps) => {
+  const [selected, setSelected] = useState<Card | null>(null);
+  
+  // Display only first 6 cards if showMoreButton is true, otherwise show all
+  const displayCards = showMoreButton ? cards.slice(0, 6) : cards;
+  const remainingCount = showMoreButton ? (cards.length - 6) : 0;
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-[hsl(var(--background))] text-foreground">
-      {/* 🔮 Fundo com gradiente principal */}
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,hsl(var(--primary)/.2),hsl(var(--accent)/.2))] pointer-events-none" />
-
-      {/* 🌈 Efeito glow de fundo suave */}
-      <div className="absolute -inset-[20%] bg-[radial-gradient(circle_at_center,hsl(var(--accent)/.15),transparent_70%)] blur-3xl pointer-events-none" />
-
-      {/* Scroll indicator */}
-      {/* <div className="fixed left-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3">
-        {items.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              const container = containerRef.current;
-              if (container) {
-                container.scrollTo({
-                  top: index * window.innerHeight,
-                  behavior: "smooth",
-                });
-              }
-            }}
-            className={cn(
-              "h-3 rounded-full transition-all duration-300",
-              index === activeIndex
-                ? "w-3 bg-[hsl(var(--primary))] shadow-[0_0_10px_hsl(var(--primary)/0.6)]"
-                : "w-2 bg-[hsl(var(--muted))] hover:bg-[hsl(var(--muted-foreground))]"
-            )}
-          />
-        ))}
-      </div> */}
-
-      {/* Conteúdo scrollável */}
-      <div
-        ref={containerRef}
-        className="h-screen w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <style>{`
-          div::-webkit-scrollbar { display: none; }
-        `}</style>
-
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            className="relative h-screen w-full snap-start snap-always flex items-center justify-center px-4 md:px-12"
-          >
-            <div className="w-full max-w-7xl">
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: false, amount: 1 }}
-                className="grid gap-8 md:grid-cols-2 items-center"
-              >
-                {/* 📝 Texto */}
-                <div className="space-y-6 order-2 md:order-1">
+    <div className="w-full h-full p-2 sm:p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+        {displayCards.map((card, i) => {
+          const isSelected = selected?.id === card.id;
+          // Pattern: large-left, small-right, large-left, small-right
+          const isLargeCard = i % 2 === 0;
+          const colSpan = isLargeCard ? "md:col-span-2" : "md:col-span-1";
+          const aspectRatio = isLargeCard ? "md:aspect-[2/1]" : "md:aspect-square";
+          
+          return (
+            <motion.div
+              key={card.id}
+              onClick={() => setSelected(isSelected ? null : card)}
+              className={cn(
+                "relative overflow-hidden rounded-xl sm:rounded-2xl cursor-pointer",
+                card.className || colSpan,
+                isSelected && "fixed inset-2 sm:inset-4 z-50 md:inset-[5%]"
+              )}
+              layout
+              transition={{
+                layout: { duration: 0.3, type: "spring" },
+              }}
+            >
+              <AnimatePresence mode="popLayout">
+                {isSelected ? (
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    viewport={{ once: false }}
-                    className="inline-block rounded-full bg-[hsl(var(--primary)/.2)] px-4 py-1.5 text-sm font-medium text-[hsl(var(--primary))]"
+                    layoutId={`card-${card.id}`}
+                    className="absolute inset-0 w-full h-full"
+                    transition={{
+                      layout: { duration: 0.3, type: "spring" },
+                    }}
                   >
-                    {index + 1} / {items.length}
+                    <motion.div
+                      className="relative w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl overflow-hidden shadow-2xl"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <motion.div
+                        className="w-full h-full flex items-center justify-center p-4 sm:p-6 md:p-12 overflow-y-auto"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ delay: 0.1 }}
+                      >
+                        {card.content}
+                      </motion.div>
+                      <motion.button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelected(null);
+                        }}
+                        className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-full p-1.5 sm:p-2 transition-colors"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <svg
+                          className="w-5 h-5 sm:w-6 sm:h-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </motion.button>
+                    </motion.div>
                   </motion.div>
-
-                  <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    viewport={{ once: false }}
-                    className="text-4xl md:text-6xl font-bold text-foreground"
+                ) : (
+                  <motion.div
+                    layoutId={`card-${card.id}`}
+                    className={cn(
+                      "relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden group",
+                      aspectRatio
+                    )}
+                    transition={{
+                      layout: { duration: 0.3, type: "spring" },
+                    }}
                   >
-                    {item.title}
-                  </motion.h2>
-
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    viewport={{ once: false }}
-                    className="text-lg text-muted-foreground leading-relaxed"
-                  >
-                    {item.description}
-                  </motion.p>
-                </div>
-
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
-                  viewport={{ once: false }}
-                  className="relative order-1 md:order-2"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-[hsl(var(--border)/.5)] bg-[hsl(var(--card)/.8)] shadow-2xl">
-                    {/* Glow em volta da imagem */}
-                    <div className="absolute -inset-0.5 bg-[linear-gradient(90deg,hsl(var(--primary)),hsl(var(--accent)))] opacity-40 blur-lg" />
-
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
                     <img
-                      src={item.image}
-                      alt={item.title}
-                      className="relative h-full w-full object-cover rounded-3xl"
+                      src={card.thumbnail}
+                      alt={`Thumbnail ${card.id}`}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
-
-                    {/* Overlay interno sutil */}
-                    <div className="absolute inset-0 bg-[linear-gradient(to-br,hsl(var(--background)/.5),transparent)]" />
-                  </div>
-
-                  {/* Efeito flutuante ao fundo */}
-                  <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[120%] w-[120%] bg-[radial-gradient(circle_at_center,hsl(var(--primary)/.2),hsl(var(--accent)/.2),transparent_70%)] blur-3xl rounded-full" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
+        
+        {/* "+ More Photos" card */}
+        {showMoreButton && remainingCount > 0 && (
+          <motion.div
+            onClick={onShowMore}
+            className="md:col-span-1 relative overflow-hidden rounded-2xl cursor-pointer aspect-square md:aspect-square group"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="relative w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden">
+              {/* Blurred background image (last photo) */}
+              {cards.length > 6 && (
+                <div className="absolute inset-0">
+                  <img
+                    src={cards[6].thumbnail}
+                    alt="More photos"
+                    className="w-full h-full object-cover blur-md scale-110 opacity-30"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/60" />
+                </div>
+              )}
+              
+              {/* "+" and text overlay */}
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6">
+                <motion.div
+                  className="text-white text-6xl font-bold mb-4"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  +
                 </motion.div>
-              </motion.div>
+                <p className="text-white text-lg font-medium text-center">
+                  {remainingCount} {remainingCount === 1 ? "foto" : "fotos"}
+                </p>
+                <p className="text-white/80 text-sm mt-2 text-center">
+                  Ver mais
+                </p>
+              </div>
+              
+              {/* Hover effect */}
+              <motion.div
+                className="absolute inset-0 z-5 bg-white/5"
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+              />
             </div>
-          </div>
-        ))}
+          </motion.div>
+        )}
       </div>
-
-      {/* Indicador de rolagem */}
-      {/* <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: activeIndex === 0 ? 1 : 0 }}
-        transition={{ delay: 1 }}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 text-sm text-muted-foreground flex flex-col items-center gap-2"
-      >
-        <span>Role para baixo</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-          className="text-[hsl(var(--primary))]"
-        >
-          ↓
-        </motion.div>
-      </motion.div> */}
+      
+      {/* Overlay when a card is selected */}
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelected(null)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
