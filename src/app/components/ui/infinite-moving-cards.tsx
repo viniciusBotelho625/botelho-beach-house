@@ -10,6 +10,7 @@ interface InfiniteMovingCardsProps {
     quote: string;
     name: string;
     rating: number;
+    source?: "google" | "airbnb";
   }[];
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
@@ -180,7 +181,23 @@ export const InfiniteMovingCards = ({
                     {getInitials(item.name)}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900 text-sm">{item.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-gray-900 text-sm">
+                        {item.name}
+                      </p>
+                      {item.source && (
+                        <span
+                          className={cn(
+                            "text-xs px-2 py-0.5 rounded-full font-medium",
+                            item.source === "google"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-pink-100 text-pink-700"
+                          )}
+                        >
+                          {item.source === "google" ? "Google" : "Airbnb"}
+                        </span>
+                      )}
+                    </div>
                     <div className="flex gap-0.5 mt-1">
                       {renderStars(item.rating)}
                     </div>
@@ -205,8 +222,8 @@ export default function ReviewsDemo() {
   const reviews = [
     {
       quote:
-        "Produto incrível! Superou todas as minhas expectativas. A qualidade é excepcional e o atendimento foi impecável.",
-      name: "Maria Silva",
+        "A nossa estadia foi excelente! A casa é ótima, muito espaçosa e confortável. A piscina tem um tamanho ideal para aproveitar o dia, e a churrasqueira é uma delícia — perfeita para reunir a família e os amigos. Tudo estava limpo e organizado. E tinha um espaço ideal para minha filhotinha correr a vontade! Recomendo muito e com certeza voltaria!",
+      name: "Julia",
       rating: 5,
     },
     {

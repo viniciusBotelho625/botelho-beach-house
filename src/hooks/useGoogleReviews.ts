@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { airbnbReviews, AirbnbReview } from "@/data/airbnbReviews";
 
-interface Review {
+export interface Review {
   quote: string;
   name: string;
   rating: number;
   time?: number;
   profilePhoto?: string;
+  source?: 'google' | 'airbnb';
+  date?: string;
 }
 
 interface GoogleReviewsData {
@@ -70,6 +73,10 @@ export function useGoogleReviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [rating, setRating] = useState(5.0);
   const [totalReviews, setTotalReviews] = useState(0);
+  const [googleRating, setGoogleRating] = useState(0);
+  const [googleTotal, setGoogleTotal] = useState(0);
+  const [airbnbRating, setAirbnbRating] = useState(5.0);
+  const [airbnbTotal, setAirbnbTotal] = useState(airbnbReviews.length);
 
   // Busca as avaliações do Google
   const { data, isLoading, error } = useQuery<GoogleReviewsData>({
@@ -85,19 +92,61 @@ export function useGoogleReviews() {
     refetchOnWindowFocus: false,
   });
 
-  // Atualiza os dados quando a busca for concluída ou usa fallback em caso de erro
+  // Combina avaliações do Google e Airbnb
   useEffect(() => {
+    // Converte avaliações do Airbnb para o formato padrão
+    const airbnbFormatted: Review[] = airbnbReviews.map((review) => ({
+      quote: review.quote,
+      name: review.name,
+      rating: review.rating,
+      source: 'airbnb' as const,
+      date: review.date,
+    }));
+
+    // Calcula rating médio do Airbnb
+    const airbnbAvg = airbnbReviews.reduce((acc, r) => acc + r.rating, 0) / airbnbReviews.length;
+    setAirbnbRating(airbnbAvg);
+    setAirbnbTotal(airbnbReviews.length);
+
     if (data && data.reviews && data.reviews.length > 0) {
-      // Usa avaliações do Google
-      setReviews(data.reviews);
-      setRating(data.rating);
-      setTotalReviews(data.totalReviews);
+      // Marca avaliações do Google com a source
+      const googleFormatted: Review[] = data.reviews.map((review) => ({
+        ...review,
+        source: 'google' as const,
+      }));
+
+      // Combina avaliações do Google + Airbnb
+      const allReviews = [...googleFormatted, ...airbnbFormatted];
+      
+      // Embaralha as avaliações para misturar as fontes
+      const shuffled = allReviews.sort(() => Math.random() - 0.5);
+      
+      setReviews(shuffled);
+      setGoogleRating(data.rating);
+      setGoogleTotal(data.totalReviews);
+
+      // Calcula rating médio geral (ponderado)
+      const totalCount = data.totalReviews + airbnbReviews.length;
+      const weightedRating = 
+        (data.rating * data.totalReviews + airbnbAvg * airbnbReviews.length) / totalCount;
+      
+      setRating(weightedRating);
+      setTotalReviews(totalCount);
     } else if (error) {
-      // Fallback para avaliações locais apenas em caso de erro
+      // Fallback: usa apenas avaliações locais (testimonials) se Google falhar
       console.warn('Usando avaliações locais como fallback');
-      setReviews(testimonials);
+      const localFormatted: Review[] = testimonials.map((review) => ({
+        ...review,
+        source: 'airbnb' as const,
+      }));
+      setReviews(localFormatted);
       setRating(5.0);
       setTotalReviews(testimonials.length);
+    } else {
+      // Enquanto carrega Google, mostra apenas Airbnb
+      setReviews(airbnbFormatted);
+      setRating(airbnbAvg);
+      setTotalReviews(airbnbReviews.length);
     }
   }, [data, error]);
 
@@ -105,6 +154,10 @@ export function useGoogleReviews() {
     reviews,
     rating,
     totalReviews,
+    googleRating,
+    googleTotal,
+    airbnbRating,
+    airbnbTotal,
     isLoading,
     error,
   };
