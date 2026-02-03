@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAirbnbCalendar, type Booking } from "@/lib/airbnbCalendar";
 import { cn } from "@/lib/utils";
 
-export default function Reserve() {
+export function Reserve() {
   const [checkInDate, setCheckInDate] = useState<Date | undefined>(undefined);
   const [checkOutDate, setCheckOutDate] = useState<Date | undefined>(undefined);
   const [checkInOpen, setCheckInOpen] = useState(false);

@@ -1,12 +1,15 @@
 "use client";
 
-import { Menu, ChevronRight } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { Separator } from "@radix-ui/react-select";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const Navigation = () => {
   const [hasBackground, setHasBackground] = useState(false);
+  const [currentLang, setCurrentLang] = useState('pt');
+  const { i18n, t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +26,33 @@ const Navigation = () => {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Atualiza o idioma atual quando mudar
+  useEffect(() => {
+    setCurrentLang(i18n.language || 'pt');
+    
+    const handleLanguageChange = (lng: string) => {
+      setCurrentLang(lng);
+    };
+    
+    i18n.on('languageChanged', handleLanguageChange);
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, [i18n]);
+
+  // Função para trocar o idioma
+  const changeLanguage = (lng: string) => {
+    console.log('Changing language to:', lng);
+    i18n.changeLanguage(lng).then(() => {
+      console.log('Language changed successfully to:', lng);
+      setCurrentLang(lng);
+    });
+  };
+
+  // Verifica qual é o idioma atual
+  const currentLanguage = currentLang;
 
   return (
     <nav
@@ -46,9 +76,23 @@ const Navigation = () => {
           </Button>
           <Separator className="h-4 sm:h-5 bg-white/10 hidden sm:block" />
           <div className="flex items-center gap-3 sm:gap-6 text-white/80 text-xs sm:text-sm font-light">
-            <button className="hover:text-white transition-colors">PT</button>
+            <button 
+              onClick={() => changeLanguage('pt')}
+              className={`hover:text-white transition-colors ${
+                currentLanguage === 'pt' ? 'text-white font-semibold' : ''
+              }`}
+            >
+              PT
+            </button>
             <span className="text-white/40">|</span>
-            <button className="hover:text-white transition-colors">EN</button>
+            <button 
+              onClick={() => changeLanguage('en')}
+              className={`hover:text-white transition-colors ${
+                currentLanguage === 'en' ? 'text-white font-semibold' : ''
+              }`}
+            >
+              EN
+            </button>
           </div>
         </div>
 
@@ -58,7 +102,7 @@ const Navigation = () => {
 
         <div className="flex items-center gap-4 sm:gap-8">
           <button className="text-white/90 hover:text-white text-xs sm:text-sm font-light tracking-wider uppercase transition-colors">
-            Contatos
+            {t('nav.contact')}
           </button>
         </div>
       </div>

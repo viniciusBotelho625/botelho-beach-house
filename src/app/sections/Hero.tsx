@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import heroImage from "../../../public/hero-beach-house.jpg";
 import BookingWidget from "../components/BookingWidget";
 
 const Hero = () => {

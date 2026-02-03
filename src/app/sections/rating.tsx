@@ -11,7 +11,7 @@ const GOOGLE_MAPS_LINK =
 const AIRBNB_LINK =
   "https://www.airbnb.com.br/rooms/1358899180534366297/reviews?photo_id=2091219424&source_impression_id=p3_1769961819_P385MsgB7dN0kRLw&previous_page_section_name=1000";
 
-export default function InfiniteMovingCardsDemo() {
+export function Rating() {
   const {
     reviews,
     rating,

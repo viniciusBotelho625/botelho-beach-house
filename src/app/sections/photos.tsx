@@ -147,7 +147,7 @@ const allCards = [
   },
 ];
 
-export default function Photos() {
+export function Photos() {
   const [showAll, setShowAll] = useState(false);
   
   const displayCards = showAll ? allCards : allCards.slice(0, 4);

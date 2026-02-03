@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  Instagram,
-  Mail,
-  Phone,
-  MapPin,
-  Heart,
-  Waves,
-} from "lucide-react";
+import { t } from "i18next";
+import { Instagram, Mail, Phone, MapPin, Heart, Waves } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -37,7 +31,11 @@ export default function Footer() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-6 sm:pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 mb-8 sm:mb-12">
           <div className="space-y-4">
-            <img src="/logo_beach_house.png" alt="Botelho Beach House" className="w-28 mb-2" />
+            <img
+              src="/logo_beach_house.png"
+              alt="Botelho Beach House"
+              className="w-28 mb-2"
+            />
             <h2 className="text-2xl font-bold text-[#3fbbd0] mb-3">
               Botelho Beach House
             </h2>
@@ -45,13 +43,10 @@ export default function Footer() {
               Sua casa de praia dos sonhos com piscina privativa, vista para o
               mar e todas as comodidades para férias inesquecíveis.
             </p>
-            
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white mb-4">
-              Links Rápidos
-            </h3>
+            <h3 className="text-xl font-bold text-white mb-4">Links Rápidos</h3>
             <ul className="space-y-3">
               <li>
                 <a
@@ -97,7 +92,9 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white mb-4">Contato</h3>
+            <h3 className="text-xl font-bold text-white mb-4">
+              {t("footer.contact")}
+            </h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-white/90 text-sm">
                 <Phone className="h-5 w-5 mt-0.5 flex-shrink-0 text-white" />
@@ -126,7 +123,7 @@ export default function Footer() {
                 </span>
               </li>
               <li className="flex items-start gap-3 text-white/90 text-sm">
-              <Instagram className="h-5 w-5 text-white" />
+                <Instagram className="h-5 w-5 text-white" />
                 <a
                   href="https://www.instagram.com/botelhobeachhouse?igsh=ejd2cDd6ZmhrZmN0&utm_source=qr"
                   target="_blank"
@@ -163,8 +160,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-6 sm:pt-8 mt-6 sm:mt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
             <p className="text-white/80 text-xs sm:text-sm text-center sm:text-left">
-              © {currentYear} Botelho Beach House. Todos os direitos
-              reservados.
+              © {currentYear} Botelho Beach House. Todos os direitos reservados.
             </p>
             <div className="flex items-center gap-1.5 sm:gap-2 text-white/80 text-xs sm:text-sm">
               <span>Feito com</span>
