@@ -1,10 +1,10 @@
 import { Footer } from "react-day-picker";
-import { Amenities } from "./sections/amenities";
-import Hero from "./sections/hero";
+import { Amenities } from "./sections/Amenities";
+import Hero from "./sections/Hero";
 import { Photos } from "./sections/photos";
 import { Places } from "./sections/places";
 import { Rating } from "./sections/rating";
-import { Reserve } from "./sections/reserve";
+import { Reserve } from "./sections/Reserve";
 
 export default function Home() {
   return (
