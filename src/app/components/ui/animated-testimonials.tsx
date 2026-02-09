@@ -39,14 +39,14 @@ export const AnimatedTestimonials = ({
 
   const rotations = useMemo(
     () => testimonials.map(() => Math.floor(Math.random() * 21) - 10),
-    [testimonials.length]
+    [testimonials.length],
   );
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-12 font-sans antialiased md:max-w-6xl md:px-8 lg:px-12">
-      <div className="relative grid grid-cols-1 gap-12 md:grid-cols-2 items-center">
-        <div>
-          <div className="relative h-[450px] w-full">
+    <div className="mx-auto w-full px-4 font-sans antialiased sm:max-w-xl md:max-w-6xl md:px-8 lg:px-12">
+      <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 items-center">
+        <div className="flex justify-center md:block">
+          <div className="relative h-[260px] w-[260px] min-[400px]:h-[300px] min-[400px]:w-[300px] sm:h-[380px] sm:w-[380px] md:h-[400px] md:w-[400px] lg:h-[550px] lg:w-[550px]">
             <AnimatePresence>
               {testimonials.map((testimonial, index) => (
                 <motion.div
@@ -94,7 +94,7 @@ export const AnimatedTestimonials = ({
             </AnimatePresence>
           </div>
         </div>
-        <div className="flex flex-col justify-between py-4 px-6">
+        <div className="flex flex-col justify-between py-4 px-0 md:px-20">
           <motion.div
             key={active}
             initial={{
@@ -114,7 +114,7 @@ export const AnimatedTestimonials = ({
               ease: "easeInOut",
             }}
           >
-            <h3 className="text-3xl font-bold text-gray-900">
+            <h3 className="text-2xl font-bold text-gray-900 md:text-3xl">
               {testimonials[active].name}
             </h3>
             <p className="text-sm text-primary font-medium mt-2">
@@ -124,12 +124,12 @@ export const AnimatedTestimonials = ({
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="mt-6 text-base text-gray-600 leading-relaxed"
+              className="mt-4 text-[15px] text-gray-600 leading-relaxed md:mt-6 md:text-base"
             >
               {testimonials[active].quote}
             </motion.p>
           </motion.div>
-          <div className="flex gap-4 pt-12 md:pt-2">
+          <div className="flex gap-4 pt-8 md:pt-2">
             <button
               onClick={handlePrev}
               className="group/button flex h-12 w-12 items-center justify-center rounded-full bg-gray-900 cursor-pointer hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg"
