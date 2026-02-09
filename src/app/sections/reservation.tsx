@@ -3,7 +3,7 @@
 import RotatingText from "@/app/components/RotatingText";
 import ReservationForm from "../components/ReservationForm";
 
-export function Reserve() {
+export function Reservation() {
   return (
     <section
       className="min-h-screen min-h-dvh flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12"

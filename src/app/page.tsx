@@ -4,7 +4,7 @@ import { Rating } from "./sections/rating";
 import { Footer } from "./sections/footer";
 import { Amenities } from "./sections/amenities";
 import { Hero } from "./sections/hero";
-import { Reserve } from "./sections/reserve";
+import { Reservation } from "./sections/reservation";
 
 export default function Home() {
   return (
@@ -22,7 +22,7 @@ export default function Home() {
         <Places />
       </section>
       <section>
-        <Reserve />
+        <Reservation />
       </section>
       <section>
         <Rating />
