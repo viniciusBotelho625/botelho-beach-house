@@ -46,7 +46,7 @@ export const AnimatedTestimonials = ({
     <div className="mx-auto w-full px-4 font-sans antialiased sm:max-w-xl md:max-w-6xl md:px-8 lg:px-12">
       <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 items-center">
         <div className="flex justify-center md:block">
-          <div className="relative h-[260px] w-[260px] min-[400px]:h-[300px] min-[400px]:w-[300px] sm:h-[380px] sm:w-[380px] md:h-[400px] md:w-[400px] lg:h-[550px] lg:w-[550px]">
+          <div className="relative h-[290px] w-[290px] min-[400px]:h-[300px] min-[400px]:w-[300px] sm:h-[380px] sm:w-[380px] md:h-[400px] md:w-[400px] lg:h-[550px] lg:w-[550px]">
             <AnimatePresence>
               {testimonials.map((testimonial, index) => (
                 <motion.div

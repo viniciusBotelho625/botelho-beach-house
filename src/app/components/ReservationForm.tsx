@@ -99,36 +99,36 @@ const ReservationForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto px-4">
-      <div className="reservation-card p-6 md:p-10 glow-accent">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14">
+    <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto px-0 sm:px-4">
+      <div className="reservation-card p-4 sm:p-6 md:p-10 glow-accent">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-14">
           
           {/* Left Side - Visual */}
-          <div className="flex flex-col items-center justify-center text-center space-y-8">
+          <div className="flex flex-col items-center justify-center text-center space-y-5 sm:space-y-8">
             {/* Decorative Icon */}
             <div className="relative">
               <div className="absolute inset-0 rounded-full blur-3xl scale-150 bg-[hsl(180_50%_45%_/0.15)]" />
-              <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full flex items-center justify-center animate-float bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/30">
-                <MapPin className="w-12 h-12 md:w-14 md:h-14 text-white" />
+              <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full flex items-center justify-center animate-float bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/30">
+                <MapPin className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-white" />
               </div>
             </div>
 
             {/* Text Content */}
-            <div className="space-y-4">
-              <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-semibold text-white">
+            <div className="space-y-3 sm:space-y-4">
+              <h2 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-white">
                 Reserve sua
                 <span className="block text-gradient-accent mt-1">Experiência</span>
               </h2>
-              <p className="text-white/75 text-sm md:text-base max-w-sm leading-relaxed">
+              <p className="text-white/75 text-xs sm:text-sm md:text-base max-w-sm leading-relaxed">
                 Preencha o formulário e receba seu orçamento personalizado em instantes via WhatsApp.
               </p>
             </div>
           </div>
 
           {/* Right Side - Form */}
-          <div className="space-y-5">
+          <div className="space-y-4 sm:space-y-5">
             {/* Date Row */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Check-in Date */}
               <div className="space-y-2">
                 <Label className="reservation-label">Entrada</Label>
@@ -137,12 +137,12 @@ const ReservationForm = () => {
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-full justify-start text-left font-normal h-9 rounded-lg border bg-muted border-border text-white hover:bg-muted/80 hover:border-border/80",
+                        "w-full justify-start text-left font-normal h-10 sm:h-9 rounded-lg border bg-muted border-border text-white hover:bg-muted/80 hover:border-border/80 text-sm sm:text-base",
                         !checkIn && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
-                      {checkIn ? format(checkIn, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
+                      <CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-primary" />
+                      <span className="truncate">{checkIn ? format(checkIn, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}</span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
@@ -167,12 +167,12 @@ const ReservationForm = () => {
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-full justify-start text-left font-normal h-9 rounded-lg border bg-muted border-border text-white hover:bg-muted/80 hover:border-border/80",
+                        "w-full justify-start text-left font-normal h-10 sm:h-9 rounded-lg border bg-muted border-border text-white hover:bg-muted/80 hover:border-border/80 text-sm sm:text-base",
                         !checkOut && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
-                      {checkOut ? format(checkOut, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}
+                      <CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-primary" />
+                      <span className="truncate">{checkOut ? format(checkOut, "dd/MM/yyyy", { locale: ptBR }) : "Selecione"}</span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-card border-border" align="start">
@@ -248,11 +248,11 @@ const ReservationForm = () => {
               </div>
 
             {/* Submit Button */}
-            <div className="pt-4">
+            <div className="pt-2 sm:pt-4">
               <Button
                 type="submit"
                 size="lg"
-                className="w-full h-12 text-base font-medium rounded-xl reservation-btn group"
+                className="w-full h-12 text-sm sm:text-base font-medium rounded-xl reservation-btn group"
                 onClick={enviarWhatsApp}
               >
                 <span>Solicitar Orçamento</span>
