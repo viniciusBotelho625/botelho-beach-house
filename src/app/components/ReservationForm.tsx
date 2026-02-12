@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { ptBR, enUS } from "date-fns/locale";
 import {
@@ -32,6 +33,7 @@ import { useTranslation } from "react-i18next";
 
 const ReservationForm = () => {
   const { t, i18n } = useTranslation();
+  const searchParams = useSearchParams();
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
   const [checkInTime, setCheckInTime] = useState<string>("");
@@ -42,17 +44,46 @@ const ReservationForm = () => {
   const numberWhatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   const locale = i18n.language === "en" ? enUS : ptBR;
 
+  // Preencher campos a partir dos query params (vindos do BookingWidget no hero)
+  useEffect(() => {
+    const checkInParam = searchParams.get("checkIn");
+    const checkOutParam = searchParams.get("checkOut");
+    const guestsParam = searchParams.get("guests");
+    let applied = false;
+    if (checkInParam) {
+      const d = new Date(checkInParam);
+      if (!Number.isNaN(d.getTime())) {
+        setCheckIn(d);
+        applied = true;
+      }
+    }
+    if (checkOutParam) {
+      const d = new Date(checkOutParam);
+      if (!Number.isNaN(d.getTime())) {
+        setCheckOut(d);
+        applied = true;
+      }
+    }
+    if (guestsParam) {
+      const n = parseInt(guestsParam, 10);
+      if (Number.isInteger(n) && n >= 1 && n <= 10) {
+        setGuests(n);
+        applied = true;
+      }
+    }
+    if (applied && typeof window !== "undefined") {
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + (window.location.hash || ""),
+      );
+    }
+  }, [searchParams]);
+
   const enviarWhatsApp = () => {
     const formatarData = (data: Date | undefined) => {
       if (!data) return "";
-      return new Date(data).toLocaleDateString(
-        i18n.language === "en" ? "en-US" : "pt-BR",
-        {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        },
-      );
+      return format(new Date(data), "dd/MM/yyyy", { locale });
     };
 
     const mensagem =
@@ -197,13 +228,7 @@ const ReservationForm = () => {
                       <CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-primary" />
                       <span id="check-in" className="truncate">
                         {checkIn
-                          ? format(
-                              checkIn,
-                              i18n.language === "en"
-                                ? "MM/dd/yyyy"
-                                : "dd/MM/yyyy",
-                              { locale },
-                            )
+                          ? format(checkIn, "dd/MM/yyyy", { locale })
                           : t("reservation.selectPlaceholder")}
                       </span>
                     </Button>
@@ -243,13 +268,7 @@ const ReservationForm = () => {
                       <CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-primary" />
                       <span id="check-out" className="truncate">
                         {checkOut
-                          ? format(
-                              checkOut,
-                              i18n.language === "en"
-                                ? "MM/dd/yyyy"
-                                : "dd/MM/yyyy",
-                              { locale },
-                            )
+                          ? format(checkOut, "dd/MM/yyyy", { locale })
                           : t("reservation.selectPlaceholder")}
                       </span>
                     </Button>

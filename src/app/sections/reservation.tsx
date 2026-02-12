@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import RotatingText from "@/app/components/RotatingText";
 import ReservationForm from "../components/ReservationForm";
 import { useTranslation } from "react-i18next";
@@ -33,7 +34,13 @@ export function Reservation() {
             </p>
           </div>
 
-          <ReservationForm />
+          <Suspense
+            fallback={
+              <div className="reservation-card p-4 sm:p-6 md:p-10 glow-accent min-h-[320px] animate-pulse rounded-lg bg-white/5" />
+            }
+          >
+            <ReservationForm />
+          </Suspense>
         </div>
       </div>
     </section>

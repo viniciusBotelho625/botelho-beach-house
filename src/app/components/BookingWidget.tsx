@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ButtonRounded } from "./ButtonRounded";
 import { ptBR } from "date-fns/locale";
 import type { DateRange } from "react-day-picker";
@@ -22,6 +23,7 @@ import { getAirbnbCalendar, type Booking } from "@/lib/airbnbCalendar";
 
 const BookingWidget = () => {
   const { t } = useTranslation();
+  const router = useRouter();
   const [checkOutOpen, setCheckOutOpen] = useState(false);
   const [checkInDate, setCheckInDate] = useState<Date | undefined>(undefined);
   const [checkOutDate, setCheckOutDate] = useState<Date | undefined>(undefined);
@@ -90,6 +92,24 @@ const BookingWidget = () => {
 
   const handleCloseConfirmModal = () => {
     setGuestsPopoverOpen(false);
+  };
+
+  const goToReservation = () => {
+    const params = new URLSearchParams();
+    if (checkInDate)
+      params.set("checkIn", checkInDate.toISOString());
+    if (checkOutDate)
+      params.set("checkOut", checkOutDate.toISOString());
+    const total = guests.adultos + guests.criancas;
+    if (total > 0) params.set("guests", String(Math.min(10, total)));
+    const query = params.toString();
+    const url = query ? `/?${query}#reservation` : `/#reservation`;
+    router.push(url);
+    setTimeout(() => {
+      document.getElementById("reservation")?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }, 100);
   };
 
   return (
@@ -361,7 +381,12 @@ const BookingWidget = () => {
           </div>
 
           {/* Reserva Button */}
-          <Button className="w-full md:w-auto md:min-w-60 text-black border-0 bg-white/90 hover:bg-white/50 h-11 sm:h-12 hover:text-black font-light tracking-wider uppercase text-sm cursor-pointer">
+          <Button
+            type="button"
+            onClick={goToReservation}
+            className="w-full md:w-auto md:min-w-60 text-black border-0 bg-white/90 hover:bg-white/50 h-11 sm:h-12 hover:text-black font-light tracking-wider uppercase text-sm cursor-pointer"
+            aria-label={t("hero.buttonNext")}
+          >
             {t("hero.buttonNext")}
             <ChevronRight className="h-4 w-4 ml-2" />
           </Button>
