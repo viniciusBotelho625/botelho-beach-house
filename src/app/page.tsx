@@ -1,3 +1,5 @@
+"use client";
+
 import { Photos } from "./sections/photos";
 import { Places } from "./sections/places";
 import { Rating } from "./sections/rating";
@@ -5,8 +7,12 @@ import { Footer } from "./sections/footer";
 import { Amenities } from "./sections/amenities";
 import { Hero } from "./sections/hero";
 import { Reservation } from "./sections/reservation";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileRating } from "./components/MobileRating";
 
 export default function Home() {
+  const isMobile = useIsMobile();
+
   return (
     <>
       <section>
@@ -24,9 +30,7 @@ export default function Home() {
       <section>
         <Reservation />
       </section>
-      <section>
-        <Rating />
-      </section>
+      <section>{isMobile ? <MobileRating /> : <Rating />}</section>
       <section>
         <Footer />
       </section>

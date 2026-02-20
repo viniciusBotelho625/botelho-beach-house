@@ -41,7 +41,10 @@ export function Amenities() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {amenities.map(({ id, Icon, key, desc }) => (
-            <Card key={id} className="border-0 shadow-sm bg-white rounded-xl py-0">
+            <Card
+              key={id}
+              className="border-0 shadow-sm bg-white rounded-xl py-0"
+            >
               <CardContent className="pt-8 pb-6 px-6 text-center">
                 <div className="w-20 h-20 rounded-2xl bg-gradient-ocean mx-auto flex items-center justify-center mb-6">
                   <Icon className="text-white" size={30} />
