@@ -47,21 +47,29 @@ const resources = {
         title: "Comodidades",
         subtitle: "Tudo para seu Conforto",
         pool: "Piscina Privativa",
-        poolDesc: "Aproveite uma piscina exclusiva com iluminação LED moderna, perfeita para relaxar a qualquer hora do dia ou da noite.",
+        poolDesc:
+          "Aproveite uma piscina exclusiva com iluminação LED moderna, perfeita para relaxar a qualquer hora do dia ou da noite.",
         bbq: "Churrasqueira",
-        bbqDesc: "Espaço gourmet completo com churrasqueira e bancada, ideal para preparar refeições especiais em família e amigos.",
+        bbqDesc:
+          "Espaço gourmet completo com churrasqueira e bancada, ideal para preparar refeições especiais em família e amigos.",
         wifi: "Wi-Fi Rápido",
-        wifiDesc: "Conexão de fibra óptica de alta velocidade em toda a propriedade, garantindo estabilidade para trabalho ou lazer.",
+        wifiDesc:
+          "Conexão de fibra óptica de alta velocidade em toda a propriedade, garantindo estabilidade para trabalho ou lazer.",
         parking: "Estacionamento",
-        parkingDesc: "Garagem privativa e segura com capacidade para até 3 veículos, oferecendo total praticidade durante sua estadia.",
+        parkingDesc:
+          "Garagem privativa e segura com capacidade para até 3 veículos, oferecendo total praticidade durante sua estadia.",
         ac: "Ventilação",
-        acDesc: "Ventiladores de teto de alta performance instalados em todos os quartos e na sala para garantir conforto térmico ideal.",
+        acDesc:
+          "Ventiladores de teto de alta performance instalados em todos os quartos e na sala para garantir conforto térmico ideal.",
         kitchen: "Cozinha Completa",
-        kitchenDesc: "Equipada com geladeira, cooktop e todos os utensílios necessários para o preparo prático de suas refeições favoritas.",
+        kitchenDesc:
+          "Equipada com geladeira, cooktop e todos os utensílios necessários para o preparo prático de suas refeições favoritas.",
         tv: "Smart TV",
-        tvDesc: 'Smart TV de 50" com acesso a diversos canais e plataformas de streaming como Netflix para sua diversão em família.',
+        tvDesc:
+          'Smart TV de 50" com acesso a diversos canais e plataformas de streaming como Netflix para sua diversão em família.',
         security: "Segurança 24h",
-        securityDesc: "Propriedade monitorada por câmeras externas e protegida por cerca elétrica, garantindo total paz de espírito aos hóspedes.",
+        securityDesc:
+          "Propriedade monitorada por câmeras externas e protegida por cerca elétrica, garantindo total paz de espírito aos hóspedes.",
       },
       photos: {
         galleryLabel: "GALERIA",
@@ -138,16 +146,14 @@ const resources = {
         subtitle: "O Que Nossos Hóspedes Dizem",
         titlePrefix: "O Que Nossos ",
         titleHighlight: "Hóspedes Dizem",
-        intro:
-          "Mais de {{count}} hospedagens concluídas com sucesso. Um histórico que transmite segurança, credibilidade e excelência em cada estadia.",
-        introBefore: "Mais de ",
-        introAfter:
-          " hospedagens concluídas com sucesso. Um histórico que transmite segurança, credibilidade e excelência em cada estadia.",
+        introBefore: "Exibindo as ",
+        introAfter: " avaliações mais recentes",
         based: "Baseado em",
         reviewsCount: "avaliações",
         reviews_count: "avaliações",
         verified: "Avaliações verificadas no Google",
         viewAll: "Ver Todas as Avaliações",
+        viewMoreOnAirbnb: "Veja todas no Airbnb",
         google: "Google",
         airbnb: "Airbnb",
         loading: "Carregando avaliações do Google...",
@@ -245,21 +251,29 @@ const resources = {
         title: "Amenities",
         subtitle: "Everything for Your Comfort",
         pool: "Private Pool",
-        poolDesc: "Enjoy an exclusive pool with modern LED lighting, perfect for relaxing at any time of the day or night.",
+        poolDesc:
+          "Enjoy an exclusive pool with modern LED lighting, perfect for relaxing at any time of the day or night.",
         bbq: "Barbecue Area",
-        bbqDesc: "Complete gourmet space with barbecue and counter, ideal for preparing special meals with family and friends.",
+        bbqDesc:
+          "Complete gourmet space with barbecue and counter, ideal for preparing special meals with family and friends.",
         wifi: "Fast Wi-Fi",
-        wifiDesc: "High-speed fiber optic connection throughout the property, ensuring stability for work or leisure.",
+        wifiDesc:
+          "High-speed fiber optic connection throughout the property, ensuring stability for work or leisure.",
         parking: "Parking",
-        parkingDesc: "Secure private garage with capacity for up to 3 vehicles, offering full convenience during your stay.",
+        parkingDesc:
+          "Secure private garage with capacity for up to 3 vehicles, offering full convenience during your stay.",
         ac: "Ventilation",
-        acDesc: "High-performance ceiling fans installed in all bedrooms and the living room to ensure ideal thermal comfort.",
+        acDesc:
+          "High-performance ceiling fans installed in all bedrooms and the living room to ensure ideal thermal comfort.",
         kitchen: "Full Kitchen",
-        kitchenDesc: "Equipped with refrigerator, cooktop, and all necessary utensils for the practical preparation of your favorite meals.",
+        kitchenDesc:
+          "Equipped with refrigerator, cooktop, and all necessary utensils for the practical preparation of your favorite meals.",
         tv: "Smart TV",
-        tvDesc: '50" Smart TV with access to various channels and streaming platforms like Netflix for your family fun.',
+        tvDesc:
+          '50" Smart TV with access to various channels and streaming platforms like Netflix for your family fun.',
         security: "24h Security",
-        securityDesc: "Property monitored by external cameras and protected by electric fencing, ensuring peace of mind for all guests.",
+        securityDesc:
+          "Property monitored by external cameras and protected by electric fencing, ensuring peace of mind for all guests.",
       },
       photos: {
         galleryLabel: "GALLERY",
@@ -336,16 +350,14 @@ const resources = {
         subtitle: "What Our Guests Say",
         titlePrefix: "What Our ",
         titleHighlight: "Guests Say",
-        intro:
-          "Over {{count}} successful stays. A track record that conveys safety, credibility and excellence in every stay.",
-        introBefore: "Over ",
-        introAfter:
-          " successful stays. A track record that conveys safety, credibility and excellence in every stay.",
+        introBefore: "showing ",
+        introAfter: " the most recent reviews",
         based: "Based on",
         reviewsCount: "reviews",
         reviews_count: "reviews",
         verified: "Verified reviews on Google",
         viewAll: "View All Reviews",
+        viewMoreOnAirbnb: "View more on Airbnb",
         google: "Google",
         airbnb: "Airbnb",
         loading: "Loading Google reviews...",

@@ -53,8 +53,6 @@ const RatingSummary = ({
             {total} avaliações
           </div>
         </div>
-
-        {/* Barras */}
         <div className="flex-1 space-y-2">
           {[5, 4, 3, 2, 1].map((star) => (
             <RatingBar

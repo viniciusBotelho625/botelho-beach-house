@@ -46,7 +46,7 @@ export function Rating() {
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
             {t("reviews.introBefore")}
             <span className="font-bold">
-              <CountUp end={40} duration={2} />
+              <CountUp end={10} duration={2} />
             </span>
             {t("reviews.introAfter")}
           </p>

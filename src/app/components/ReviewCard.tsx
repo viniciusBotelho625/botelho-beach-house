@@ -1,7 +1,10 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ThumbsUp } from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/app/components/ui/avatar";
 import StarRating from "./StarRating";
 
 export interface ReviewData {
@@ -54,11 +57,9 @@ const ReviewCard = ({ review, index }: ReviewCardProps) => {
     return dateStr;
   };
 
-  console.log("asdsadas", review.rating);
-
   return (
     <div
-      className="rounded-2xl bg-white border border-neutral-200 p-4 shadow-sm"
+      className="rounded-2xl bg-white border border-neutral-200 p-4 shadow-sm min-h-[230px] max-h-[280px]"
       style={{ animationDelay: `${index * 80}ms` }}
     >
       {/* Header: Avatar + Nome + Verificado + Data */}
@@ -112,7 +113,7 @@ const ReviewCard = ({ review, index }: ReviewCardProps) => {
       </div>
 
       {/* Comentário */}
-      <p className="text-sm text-gray-500 leading-relaxed mb-3">
+      <p className="text-sm text-gray-500 leading-relaxed mb-3 line-clamp-5 flex-1">
         {review.comment}
       </p>
     </div>
